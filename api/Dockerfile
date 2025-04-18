@@ -1,15 +1,10 @@
-FROM python:3.9
-
+FROM python:3.11 AS builder
 WORKDIR /app
-
-ENV FLASK_APP=app.py
-
-ENV FLASK_ENV=development
-
-COPY ./requirements.txt .
-
+COPY requirements.txt .
 RUN pip install -r requirements.txt
-
 COPY . .
-
-CMD ["python", "app.py"]
+FROM python:3.11-slim
+WORKDIR /app
+COPY --from=builder /app /app
+EXPOSE 5000
+CMD ["python3", "app.py"]
